@@ -1,8 +1,8 @@
 import pandas as pd
-import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import os
+
 
 def aggregate_customers(df):
     df = df.copy()
@@ -23,16 +23,19 @@ def aggregate_customers(df):
     features['avg_amount_abs'] = grp['Amount'].apply(lambda x: x.abs().mean())
     features['fraud_count'] = grp['FraudResult'].sum()
     features['fraud_rate'] = grp['FraudResult'].mean()
+
     def mode_hour(series):
         mode_vals = series.mode()
         return mode_vals.iloc[0] if len(mode_vals) > 0 else 0
     features['mode_hour'] = grp['hour'].agg(mode_hour)
     return features
 
+
 def create_rfm_features(customer_df):
     rfm = customer_df[['recency_days', 'txn_count', 'total_debit']].copy()
     rfm.columns = ['recency', 'frequency', 'monetary']
     return rfm
+
 
 def assign_high_risk_cluster(rfm, n_clusters=3, random_state=42):
     scaler = StandardScaler()
@@ -43,6 +46,7 @@ def assign_high_risk_cluster(rfm, n_clusters=3, random_state=42):
     high_risk_cluster = cluster_means.idxmin()
     high_risk = (clusters == high_risk_cluster).astype(int)
     return high_risk
+
 
 if __name__ == "__main__":
     df = pd.read_csv('data/raw/data.csv')
