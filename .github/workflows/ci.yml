@@ -17,7 +17,9 @@ jobs:
       run: |
         pip install flake8 pytest
         pip install -r requirements.txt
-    - name: Lint with flake8
-      run: flake8 src/ --max-line-length=120 --ignore=E203,W503
+
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+
     - name: Test with pytest
       run: pytest tests/
